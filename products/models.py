@@ -5,7 +5,6 @@ from django.db import models
 from PIL import Image
 
 
-# Create your models here.
 class Product(models.Model):
     name = models.CharField(max_length=80)
     description_short = models.TextField(max_length=150)

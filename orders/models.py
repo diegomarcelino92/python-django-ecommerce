@@ -4,7 +4,6 @@ from django.db import models
 from products.models import Variation
 
 
-# Create your models here.
 class Order(models.Model):
     user = models.ForeignKey(
         get_user_model(), on_delete=models.CASCADE,
