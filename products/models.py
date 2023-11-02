@@ -38,7 +38,7 @@ class Product(models.Model):
         new_img.save(image_path, optimize=True, quality=50)
 
     def save(self, *args, **kwargs):
-        super().save(self, *args, **kwargs)
+        super().save(*args, **kwargs)
 
         if self.image:
             self.resize_image()

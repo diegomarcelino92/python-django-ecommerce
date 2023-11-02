@@ -3,7 +3,6 @@ version: "3.9"
 services:
   django-ecommerce:
     image: postgres
-    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
