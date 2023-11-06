@@ -8,9 +8,10 @@ from products.models import Product
 
 class ProductList(ListView):
     model = Product
+    template_name = 'list.html'
 
-    def get(self, request):
-        return HttpResponse('List')
+    # def get(self, request):
+    #     return HttpResponse('List')
 
 
 class ProductDetail(View):

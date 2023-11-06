@@ -1,7 +1,7 @@
-{% load omfilters %}
+{% comment %} {% load omfilters %} {% endcomment %}
 
 <nav class="navbar navbar-dark bg-primary navbar-expand-lg">
-  <a class="navbar-brand" href="{% url 'produto:lista' %}">E-commerce</a>
+  <a class="navbar-brand" href="{% url 'products:list' %}">E-commerce</a>
   <button
     class="navbar-toggler"
     type="button"
@@ -30,31 +30,33 @@
           Conta
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="{% url 'pedido:lista' %}"
+          <a class="dropdown-item" href="{% url 'orders:pay' %}"
             >Meus pedidos</a
           >
-          <a class="dropdown-item" href="{% url 'perfil:criar' %}"
+          <a class="dropdown-item" href="{% url 'profiles:create' %}"
             >Atualizar meus dados</a
           >
-          <a class="dropdown-item" href="{% url 'perfil:logout' %}">Sair</a>
+          <a class="dropdown-item" href="{% url 'profiles:logout' %}">Sair</a>
         </div>
       </li>
       {% else %}
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'perfil:criar' %}">Entrar</a>
+        <a class="nav-link" href="{% url 'profiles:create' %}">Entrar</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'perfil:criar' %}">Criar conta</a>
+        <a class="nav-link" href="{% url 'profiles:create' %}">Criar conta</a>
       </li>
       {% endif %} {% if request.session.carrinho %}
       <li class="nav-item">
         <a
           class="nav-link nav-cart-link active"
-          href="{% url 'produto:carrinho' %}"
+          href="{% url 'products:cart' %}"
         >
           <span class="nav-cart-text mr-1"> Carrinho </span>
           <span class="nav-cart-count mr-1">
+            {% comment %}
             <strong>{{ request.session.carrinho|cart_total_qtd }}x</strong>
+            {% endcomment %}
           </span>
           <span class="nav-cart-icon mr-2">
             <i class="fas fa-shopping-cart"></i>
@@ -66,7 +68,7 @@
     <form
       class="form-inline my-2 my-lg-0"
       method="GET"
-      action="{% url 'produto:busca' %}"
+      action="{% url 'products:list' %}"
     >
       <input
         name="termo"
