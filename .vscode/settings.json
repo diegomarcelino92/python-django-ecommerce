@@ -12,6 +12,10 @@
     "editor.formatOnSave": true,
   },
 
+  "[django-html]": {
+    "editor.formatOnSave": false,
+  },
+
   "editor.tabSize": 4,
   "editor.codeActionsOnSave": {
     "source.organizeImports": true,

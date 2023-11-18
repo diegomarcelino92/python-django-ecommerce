@@ -43,6 +43,15 @@ class Product(models.Model):
         if self.image:
             self.resize_image()
 
+    def get_price(self):
+        return self.__to_money(self.price)
+
+    def get_price_promo(self):
+        return self.__to_money(self.price_promo)
+
+    def __to_money(self, money):
+        return f'RS {money:,.2f}'
+
     def __str__(self):
         return str(self.name)
 
