@@ -5,7 +5,18 @@ from django.db import models
 from PIL import Image
 
 
-class Product(models.Model):
+class MoneyMixin():
+    def get_price(self):
+        return self.__to_money(self.price)
+
+    def get_price_promo(self):
+        return self.__to_money(self.price_promo)
+
+    def __to_money(self, money):
+        return f'RS {money:,.2f}'
+
+
+class Product(models.Model, MoneyMixin):
     name = models.CharField(max_length=80)
     description_short = models.TextField(max_length=150)
     description_long = models.TextField(max_length=350)
@@ -43,20 +54,11 @@ class Product(models.Model):
         if self.image:
             self.resize_image()
 
-    def get_price(self):
-        return self.__to_money(self.price)
-
-    def get_price_promo(self):
-        return self.__to_money(self.price_promo)
-
-    def __to_money(self, money):
-        return f'RS {money:,.2f}'
-
     def __str__(self):
         return str(self.name)
 
 
-class Variation(models.Model):
+class Variation(models.Model, MoneyMixin):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     name = models.CharField(max_length=80)
     price = models.FloatField()
