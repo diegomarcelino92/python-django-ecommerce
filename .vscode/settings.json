@@ -1,7 +1,6 @@
 {
   "pylint.args": ["--load-plugins=pylint_django"],
-  "autopep8.args": ["--indent-size=4", "--max-line-length=120"],
-  
+
   "python.terminal.activateEnvironment": true,
   "python.analysis.indexing": true,
   "python.analysis.autoImportCompletions": true,
@@ -9,16 +8,18 @@
 
   "[python]": {
     "editor.defaultFormatter": "ms-python.autopep8",
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": true
   },
 
   "[django-html]": {
     "editor.formatOnSave": false,
+    "editor.tabSize": 2
   },
 
   "editor.tabSize": 4,
   "editor.codeActionsOnSave": {
     "source.organizeImports": true,
-    "source.fixAll.unusedImports": true
-  },
+    "source.fixAll.unusedImports": true,
+    "source.fixAll": true
+  }
 }
