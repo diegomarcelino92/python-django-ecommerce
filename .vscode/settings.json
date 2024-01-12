@@ -18,8 +18,8 @@
 
   "editor.tabSize": 4,
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true,
-    "source.fixAll.unusedImports": true,
-    "source.fixAll": true
+    "source.organizeImports": "explicit",
+    "source.fixAll.unusedImports": "explicit",
+    "source.fixAll": "explicit"
   }
 }

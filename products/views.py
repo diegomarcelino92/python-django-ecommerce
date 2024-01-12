@@ -1,12 +1,11 @@
 from django.contrib import messages
-from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from products.models import Product, Variation
+from products.models import MoneyMixin, Product, Variation
 
 
 class ProductList(ListView):
@@ -16,15 +15,35 @@ class ProductList(ListView):
     paginate_by = 30
 
 
-class ProductDetail(DetailView):
+class ProductDetail(DetailView, MoneyMixin):
     model = Product
     template_name = 'product_detail.html'
     context_object_name = 'product'
     slug_url_kwargs = 'slug'
 
 
-class ProductCart(View):
-    ...
+class ProductCart(View, MoneyMixin):
+    def get(self, *args, **kwargs):
+        cart = self.request.session.get('cart', {})
+        products = []
+        cart_total_price = 0
+
+        for product in cart.values():
+            if isinstance(product, dict):
+                cart_total_price += product['total_promo']
+
+                product.update({
+                    'price': self.to_money(product['total']),
+                    'total': self.to_money(product['total']),
+                    'total_promo': self.to_money(product['total_promo']) if product['total_promo'] > 0 else None,
+                    'price_promo': self.to_money(product['price_promo']) if product['price_promo'] > 0 else None,
+                })
+                products.append(product)
+
+        return render(self.request, 'product_cart.html', {
+            'products': products,
+            'cart_total_price': self.to_money(cart_total_price)
+        })
 
 
 class ProductCartAdd(View):
@@ -67,6 +86,7 @@ class ProductCartAdd(View):
                 return
         else:
             cart[var_id] = {
+                "id": var_id,
                 'quantity': 1,
                 'price': variation.price,
                 'total': variation.price,
@@ -78,6 +98,7 @@ class ProductCartAdd(View):
                 'image': variation.product.image.url,
             }
 
+        cart['total'] += 1
         self.request.session.save()
         messages.success(self.request, 'Produto adicionado ao carrinho.')
 
@@ -98,10 +119,22 @@ class ProductCartAdd(View):
 
     def __get_cart(self):
         if not self.request.session.get('cart'):
-            self.request.session['cart'] = {}
+            self.request.session['cart'] = {'total': 0}
 
         return self.request.session.get('cart')
 
 
 class ProductCartRemove(View):
-    ...
+    def get(self, *args, **kwargs):
+        cart = self.request.session.get('cart')
+        referer = self.request.META.get('HTTP_REFERER', reverse('products:cart'))
+        var_id = self.request.GET.get('vid')
+
+        if not var_id or not cart or not cart[var_id]:
+            return redirect(referer)
+
+        variation = cart[var_id]
+        cart['total'] -= variation['quantity']
+        del cart[var_id]
+        self.request.session.save()
+        return redirect(referer)

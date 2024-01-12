@@ -7,13 +7,13 @@ from PIL import Image
 
 class MoneyMixin():
     def get_price(self):
-        return self.__to_money(self.price)
+        return self.to_money(self.price)
 
     def get_price_promo(self):
-        return self.__to_money(self.price_promo)
+        return self.to_money(self.price_promo)
 
-    def __to_money(self, money):
-        return f'RS {money:,.2f}'
+    def to_money(self, money):
+        return f'R$ {money:,.2f}'
 
 
 class Product(models.Model, MoneyMixin):

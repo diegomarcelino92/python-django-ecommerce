@@ -43,11 +43,11 @@
                 >
                   {% for v in product.variation_set.all %}
                     <option
-                    data-preco="{{ v.get_price }}"
-                    data-preco-promocional="{{ v.get_price_promo }}"
-                    value={{ v.id }}
-                    >
-                    {{ v.name }}
+                      data-preco="{{ v.get_price }}"
+                      data-preco-promocional="{{ v.get_price_promo }}"
+                      value={{ v.id }}
+                      >
+                        {{ v.name }}
                     </option>
                   {% endfor %}
                 </select>
