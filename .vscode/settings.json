@@ -12,8 +12,12 @@
   },
 
   "[django-html]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.tabSize": 2
+  },
+
+  "emmet.includeLanguages": {
+    "django-html": "html"
   },
 
   "editor.tabSize": 4,

@@ -1,0 +1,22 @@
+{% extends "base.html" %} {% load crispy_forms_tags %} {% block content %}
+<div class="row">
+  <div class="col-lg">
+    <h1 class="mb-3">Login</h1>
+  </div>
+  <div class="col-lg">
+    <h1 class="mb-3">Cadastro</h1>
+
+    <form method="POST" action="">
+      {% csrf_token %} {{ user_form | crispy }}
+      <div class="p-1 bg-secondary w-100 mb-4 mt-4"></div>
+      {{ profile_form | crispy }}
+      <div class="p-1 bg-secondary w-100 mb-4 mt-4"></div>
+      {{ profile_address_form | crispy }}
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg mt-5">
+        {% if user.is_authenticated %} Atualizar {% else %} Criar {% endif %}
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock content %}

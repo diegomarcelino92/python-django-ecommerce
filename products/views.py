@@ -1,3 +1,5 @@
+from math import prod
+
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -30,15 +32,17 @@ class ProductCart(View, MoneyMixin):
 
         for product in cart.values():
             if isinstance(product, dict):
-                cart_total_price += product['total_promo']
+                cart_total_price += product['total_promo'] if product['total_promo'] else product['total']
 
-                product.update({
+                product_view = {
+                    **product,
                     'price': self.to_money(product['total']),
                     'total': self.to_money(product['total']),
                     'total_promo': self.to_money(product['total_promo']) if product['total_promo'] > 0 else None,
                     'price_promo': self.to_money(product['price_promo']) if product['price_promo'] > 0 else None,
-                })
-                products.append(product)
+                }
+
+                products.append(product_view)
 
         return render(self.request, 'product_cart.html', {
             'products': products,

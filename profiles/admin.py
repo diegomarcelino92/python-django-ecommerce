@@ -19,6 +19,6 @@ class ProfileAddressAdmin(admin.ModelAdmin):
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     model = Profile
-    list_display = ('email', 'phone')
-    search_fields = ('email', 'phone')
+    list_display = ('user', 'phone')
+    search_fields = ('user', 'phone')
     inlines = [ProfileAddressInline]
