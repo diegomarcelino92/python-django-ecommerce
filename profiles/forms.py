@@ -1,9 +1,11 @@
 from typing import Any
 
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from profiles.models import Profile, ProfileAddress
+
+User = get_user_model()
 
 
 class ProfileForm(forms.ModelForm):
