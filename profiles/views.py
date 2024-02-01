@@ -1,6 +1,6 @@
 import copy
 
-from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, get_user_model, login
 from django.shortcuts import render
 from django.views import View
 
@@ -56,16 +56,18 @@ class ProfileCreate(View):
         profile_form = self.profile_form
         profile_address_form = self.profile_address_form
 
+        user = self.request.user
+        data = user_form.cleaned_data
+        password = data.get('password')
+
         if user_form.is_valid() and profile_form.is_valid() and profile_address_form.is_valid():
             if self.request.user.is_authenticated:
-                data = user_form.cleaned_data
+                user = User.objects.get(username=self.request.user.username)
 
-                password = data.get('password')
                 if password:
                     user.set_password(password)
                 data.pop('password')
 
-                user = User.objects.get(username=self.request.user.username)
                 user.__dict__.update(data)
 
                 profile = Profile.objects.filter(user=user).first()
@@ -93,7 +95,12 @@ class ProfileCreate(View):
                 profile.save()
                 profile_address.save()
 
-        # NOT WORKING
+        if password:
+            auth = authenticate(self.request, username=user, password=password)
+
+            if auth:
+                login(self.request, user=user)
+
         self.request.session['cart'] = self.cart
         self.request.session.save()
         return self.view

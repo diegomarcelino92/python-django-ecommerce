@@ -22,7 +22,7 @@ class Profile(models.Model):
             raise ValidationError(errors)
 
     def __str__(self):
-        return self.user.first_name
+        return self.user.get_username()
 
 
 class ProfileAddress(models.Model):
