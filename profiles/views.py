@@ -1,7 +1,9 @@
 import copy
+from urllib import request
 
-from django.contrib.auth import authenticate, get_user_model, login
-from django.shortcuts import render
+from django.contrib import messages
+from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.shortcuts import redirect, render
 from django.views import View
 
 from profiles.forms import ProfileAddressForm, ProfileForm, UserForm
@@ -81,6 +83,8 @@ class ProfileCreate(View):
                 user.save()
                 profile.save()
                 profile_address.save()
+                messages.success(request, 'Cadastro atualizado com sucesso')
+
             else:
                 user = user_form.save(commit=False)
                 user.set_password(user_form.cleaned_data.get('password'))
@@ -94,6 +98,7 @@ class ProfileCreate(View):
                 user.save()
                 profile.save()
                 profile_address.save()
+                messages.success(self.request, 'Cadastro criado com sucesso')
 
         if password:
             auth = authenticate(self.request, username=user, password=password)
@@ -103,16 +108,32 @@ class ProfileCreate(View):
 
         self.request.session['cart'] = self.cart
         self.request.session.save()
+        messages.success(self.request, 'Cadastro criado com sucesso')
+        redirect('profiles:create')
         return self.view
 
 
-class ProfileUpdate(View):
-    pass
-
-
 class ProfileLogin(View):
-    pass
+    def post(self, *args, **kwargs):
+        username = self.request.POST.get('username')
+        password = self.request.POST.get('password')
+
+        if not username or not password:
+            messages.error(self.request, 'Usuário ou senha inválidos')
+            return redirect('profiles:create')
+
+        user = authenticate(self.request, username=username, password=password)
+
+        if user:
+            messages.success(self.request, 'Você fez login com sucesso')
+            login(self.request, user=user)
+            return redirect('products:list')
+        else:
+            messages.error(self.request, 'Usuário ou senha inválidos')
+            return redirect('profiles:create')
 
 
 class ProfileLogout(View):
-    pass
+    def get(self, *args, **kwargs):
+        logout(request=self.request)
+        return redirect('products:list')

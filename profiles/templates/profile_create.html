@@ -1,15 +1,40 @@
 {% extends "base.html" %} {% load crispy_forms_tags %} {% block content %}
 <div class="row">
+  {% if not request.user.is_authenticated %}
   <div class="col-lg">
-    {% if not request.user.is_authenticated %}
-    <h1 class="mb-3">Login</h1>
-    {% endif %}
+    <h2 class="mb-3">Login</h2>
+    <form method='POST' action="{% url "profiles:login" %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          name='username' 
+          class="form-control"
+          id="username"
+          placeholder="Enter username"
+        />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          name='password'
+          type="password"
+          class="form-control"
+          id="password"
+          placeholder="Password"
+        />
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg mt-5">
+        Entrar
+      </button>
+    </form>
   </div>
+  {% endif %}
   <div class="col-lg">
     {% if not request.user.is_authenticated %}
-    <h1 class="mb-3">Cadastro</h1>
+    <h2 class="mb-3">Cadastro</h2>
     {% else %}
-    <h1 class="mb-3">Atualizar</h1>
+    <h2 class="mb-3">Atualizar</h2>
     {% endif %}
 
     <form method="POST" action="">
