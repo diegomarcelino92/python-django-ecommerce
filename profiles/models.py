@@ -6,7 +6,7 @@ from profiles.validators import cpf_validator
 
 
 class Profile(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='profile')
     age = models.PositiveIntegerField()
     document = models.CharField(max_length=30)
     birth_date = models.DateField()
@@ -30,7 +30,7 @@ class ProfileAddress(models.Model):
         verbose_name = "Address"
         verbose_name_plural = "Addresses"
 
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="address")
     address = models.CharField(max_length=100)
     number = models.CharField(max_length=10)
     neighborhood = models.CharField(max_length=50)

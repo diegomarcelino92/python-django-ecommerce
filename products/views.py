@@ -8,6 +8,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
 from products.models import MoneyMixin, Product, Variation
+from profiles.models import ProfileAddress
 
 
 class ProductList(ListView):
@@ -24,9 +25,8 @@ class ProductDetail(DetailView, MoneyMixin):
     slug_url_kwargs = 'slug'
 
 
-class ProductCart(View, MoneyMixin):
-    def get(self, *args, **kwargs):
-        cart = self.request.session.get('cart', {})
+class CartMixin(MoneyMixin):
+    def get_cart_view(self, cart={}):
         products = []
         cart_total_price = 0
 
@@ -43,6 +43,14 @@ class ProductCart(View, MoneyMixin):
                 }
 
                 products.append(product_view)
+
+        return [products, cart_total_price]
+
+
+class ProductCart(View, CartMixin):
+    def get(self, *args, **kwargs):
+        cart = self.request.session.get('cart', {})
+        products, cart_total_price = self.get_cart_view(cart)
 
         return render(self.request, 'product_cart.html', {
             'products': products,
@@ -142,3 +150,27 @@ class ProductCartRemove(View):
         del cart[var_id]
         self.request.session.save()
         return redirect(referer)
+
+
+class ProductCartResume(View, CartMixin):
+    def get(self, *args, **kwargs):
+        cart = self.request.session.get('cart', {})
+        products, cart_total_price = self.get_cart_view(cart)
+
+        profile = self.request.user.profile.first()
+        if not profile:
+            messages.warning(self.request, 'Você precisa de um perfil para continuar a compra.')
+            return redirect('profiles:create')
+
+        address = profile.address.first()
+        if not address:
+            messages.warning(self.request, 'Você precisa de um endereço para continuar a compra.')
+            return redirect('profiles:create')
+
+        return render(self.request, 'product_cart_resume.html', {
+            'user': self.request.user,
+            'profile': profile,
+            'address': address,
+            'products': products,
+            'cart_total_price': self.to_money(cart_total_price)
+        })

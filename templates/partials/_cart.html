@@ -1,0 +1,35 @@
+<div class="table-responsive">
+  <table class="table">
+    <tr>
+      <th class="d-none d-lg-block">Imagem</th>
+      <th>Produto</th>
+      <th>Var.</th>
+      <th>Qtd.</th>
+      <th>Valor unit.</th>
+      <th>Total</th>
+    </tr>
+    
+    {% for product in products %}
+    <tr>
+      <td class="d-none d-lg-block">
+        <img class="cart-img" src="{{product.image}}" />
+      </td>
+      <td>
+        <a href="{% url "products:detail" product.slug %}">{{product.name}}</a>
+        <a class="ml-3" href="{% url "products:cart-remove" %}?vid={{ product.id }}">
+          <i class="fas fa-times-circle text-danger" aria-hidden="true"></i>
+        </a>
+      </td>
+      <td>{{ product.variation}}</td>
+      <td>{{ product.quantity }}</td>
+      {% if product.total_promo %}
+      <td>{{ product.price_promo }}</td>
+      <td>{{ product.total_promo }}</td>
+      {% else %}
+      <td>{{ product.price }}</td>
+      <td>{{ product.total }}</td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </table>
+</div>
