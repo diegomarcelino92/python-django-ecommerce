@@ -26,7 +26,7 @@ class ProductDetail(DetailView, MoneyMixin):
 
 
 class CartMixin(MoneyMixin):
-    def get_cart_view(self, cart={}):
+    def get_cart_calc(self, cart={}):
         products = []
         cart_total_price = 0
 
@@ -50,7 +50,7 @@ class CartMixin(MoneyMixin):
 class ProductCart(View, CartMixin):
     def get(self, *args, **kwargs):
         cart = self.request.session.get('cart', {})
-        products, cart_total_price = self.get_cart_view(cart)
+        products, cart_total_price = self.get_cart_calc(cart)
 
         return render(self.request, 'product_cart.html', {
             'products': products,
@@ -155,7 +155,7 @@ class ProductCartRemove(View):
 class ProductCartResume(View, CartMixin):
     def get(self, *args, **kwargs):
         cart = self.request.session.get('cart', {})
-        products, cart_total_price = self.get_cart_view(cart)
+        products, cart_total_price = self.get_cart_calc(cart)
 
         profile = self.request.user.profile.first()
         if not profile:

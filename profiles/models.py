@@ -8,7 +8,7 @@ from profiles.validators import cpf_validator
 class Profile(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='profile')
     age = models.PositiveIntegerField()
-    document = models.CharField(max_length=30)
+    document = models.CharField(max_length=30, unique=True)
     birth_date = models.DateField()
     phone = models.CharField(max_length=20)
 
