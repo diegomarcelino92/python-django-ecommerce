@@ -1,12 +1,19 @@
+from typing import Any
+
+from django.contrib import messages
+from django.db.models.query import QuerySet
+from django.http import HttpRequest
+from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import redirect, render
-from django.views import View
+from django.urls import reverse
+from django.views.generic import DetailView, View
 
 from orders.models import Order, OrderItem
 from products.models import Variation
 from products.views import CartMixin
 
 
-class OrderPay(View, CartMixin):
+class OrderCreate(View, CartMixin):
     def get(self, *args, **kwargs):
         cart = self.request.session.get('cart')
 
@@ -52,7 +59,25 @@ class OrderPay(View, CartMixin):
 
         del self.request.session['cart']
         self.request.session.save()
-        return redirect('orders:list')
+        messages.success(self.request, 'Pedido criado com sucesso')
+        return redirect(reverse('orders:pay', kwargs={'order_id': order.pk}))
+
+
+class OrderPay(DetailView):
+    template_name = 'order_pay.html'
+    model = Order
+    context_object_name = 'order'
+    pk_url_kwarg = 'order_id'
+
+    def dispatch(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return super().dispatch(self.request, *args, **kwargs)
+        return redirect('profiles:create')
+
+    def get_queryset(self) -> QuerySet[Any]:
+        qs = super().get_queryset()
+        qs = qs.filter(user=self.request.user)
+        return qs
 
 
 class OrderClose(View):

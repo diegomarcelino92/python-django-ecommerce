@@ -30,7 +30,7 @@
           Conta
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="{% url 'orders:pay' %}"
+          <a class="dropdown-item" href="{% url 'orders:list' %}"
             >Meus pedidos</a
           >
           <a class="dropdown-item" href="{% url 'profiles:create' %}"
@@ -46,7 +46,8 @@
       <li class="nav-item">
         <a class="nav-link" href="{% url 'profiles:create' %}">Criar conta</a>
       </li>
-      {% endif %} {% if request.session.cart and request.session.cart.total > 0 %}
+      {% endif %} 
+      {% if request.session.cart and request.session.cart.total > 0 %}
       <li class="nav-item">
         <a
           class="nav-link nav-cart-link active"

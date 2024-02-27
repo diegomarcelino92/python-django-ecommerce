@@ -1,4 +1,3 @@
-from math import prod
 
 from django.contrib import messages
 from django.shortcuts import redirect, render
@@ -7,8 +6,19 @@ from django.views import View
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from products.models import MoneyMixin, Product, Variation
+from products.models import Product, Variation
 from profiles.models import ProfileAddress
+
+
+class MoneyMixin():
+    def get_price(self):
+        return self.to_money(self.price)
+
+    def get_price_promo(self):
+        return self.to_money(self.price_promo)
+
+    def to_money(self, money):
+        return f'R$ {money:,.2f}'
 
 
 class ProductList(ListView):
