@@ -6,7 +6,7 @@ from django.http import HttpRequest
 from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.views.generic import DetailView, View
+from django.views.generic import DetailView, ListView, View
 
 from orders.models import Order, OrderItem
 from products.models import Variation
@@ -35,12 +35,13 @@ class OrderCreate(View, CartMixin):
             if quantity > stock:
                 cart[var_id]['quantity'] = stock
 
-        _, cart_total_price = self.get_cart_calc(cart)
+        _, cart_total_price, cart_total_itens = self.get_cart_calc(cart)
         self.request.session.save()
 
         order = Order(
             user=self.request.user,
             total=cart_total_price,
+            total_items=cart_total_itens,
             status='Pending'
         )
         order.save()
@@ -63,12 +64,7 @@ class OrderCreate(View, CartMixin):
         return redirect(reverse('orders:pay', kwargs={'order_id': order.pk}))
 
 
-class OrderPay(DetailView):
-    template_name = 'order_pay.html'
-    model = Order
-    context_object_name = 'order'
-    pk_url_kwarg = 'order_id'
-
+class OrderMixin(View):
     def dispatch(self, *args, **kwargs):
         if self.request.user.is_authenticated:
             return super().dispatch(self.request, *args, **kwargs)
@@ -80,14 +76,22 @@ class OrderPay(DetailView):
         return qs
 
 
-class OrderClose(View):
-    pass
+class OrderPay(OrderMixin, DetailView):
+    template_name = 'order_pay.html'
+    model = Order
+    context_object_name = 'order'
+    pk_url_kwarg = 'order_id'
 
 
-class OrderDetail(View):
-    pass
+class OrderDetail(OrderMixin, DetailView):
+    template_name = 'order_detail.html'
+    model = Order
+    context_object_name = 'order'
+    pk_url_kwarg = 'order_id'
 
 
-class OrderList(View):
-    def get(self, *args, **kwargs):
-        return render(self.request, 'order_list.html')
+class OrderList(OrderMixin, ListView):
+    model = Order
+    template_name = 'order_list.html'
+    context_object_name = 'orders'
+    paginate_by = 10

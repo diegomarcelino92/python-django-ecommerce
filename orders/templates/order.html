@@ -7,10 +7,10 @@
           <div class="col-lg-2 font-weight-bold">Número do pedido:</div>
           <div class="col-lg-4">{{ order.id }}</div>
           <div class="col-lg-2 font-weight-bold">Total a pagar:</div>
-          <div class="col-lg-4">{{ order.total }}</div>
+          <div class="col-lg-4">{{ order.get_price }}</div>
 
           <div class="col-lg-2 font-weight-bold">QTD. Itens:</div>
-          <div class="col-lg-4">{{ order.qtd_total }}</div>
+          <div class="col-lg-4">{{ order.total_items }}</div>
           <div class="col-lg-2 font-weight-bold">Status:</div>
           <div class="col-lg-4">{{ order.get_status_display }}</div>
       </div>
@@ -39,7 +39,7 @@
                   <td>{{ item.product }}</td>
                   <td>{{ item.variacao }}</td>
                   <td>{{ item.quantity }}</td>
-                  <td>{{ item.price }}</td>
+                  <td>{{ item.get_price }}</td>
               </tr>
               {% endfor %}
 
