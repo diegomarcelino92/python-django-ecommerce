@@ -1,5 +1,5 @@
-
 from django.contrib import messages
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
@@ -7,7 +7,6 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
 from products.models import Product, Variation
-from profiles.models import ProfileAddress
 
 
 class MoneyMixin():
@@ -25,7 +24,17 @@ class ProductList(ListView):
     model = Product
     template_name = 'product_list.html'
     context_object_name = 'products'
-    paginate_by = 30
+    paginate_by = 1
+
+    def get_queryset(self, *args, **kwargs):
+        term = self.request.GET.get('term')
+        qs = super().get_queryset(*args, **kwargs)
+
+        if term:
+            qs = qs.filter(
+                Q(name__icontains=term) | Q(description_short__icontains=term) | Q(description_long__icontains=term)
+            )
+        return qs
 
 
 class ProductDetail(DetailView, MoneyMixin):
